@@ -1,5 +1,12 @@
 {
     "editor.tabSize": 2,
     "editor.wordWrap": "on",
-    "editor.wordWrapColumn": 80
+    "editor.wordWrapColumn": 80,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
+    },
+    "prettier.singleQuote": true,
+    "prettier.semi": false
 }

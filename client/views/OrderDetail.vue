@@ -25,7 +25,10 @@
           </td>
           <td>{{ props.item.createDateTime }}</td>
           <td>{{ props.item.lastUpdatedDateTime }}</td>
-          <td>{{ filterResourceName(props.item.supplier) }}</td>
+          <td> 
+              <user-detail-tooltip :userId="filterResourceName(props.item.supplier)" userType="SUPPLIER_USER_TYPE">
+              </user-detail-tooltip>
+          </td>
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
@@ -62,35 +65,39 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
+import UserDetailTooltip from '../components/UserDetailTooltip'
 
 export default {
-  name: "order-detail",
+  name: 'order-detail',
   data() {
     return {
-      search: "",
+      search: '',
       headers: [
-        { text: "Order No.", value: "orderNumber" },
-        { text: "Status", value: "orderStatus" },
-        { text: "Created On.", value: "createDateTime" },
-        { text: "Last Updated", value: "lastUpdatedDateTime" },
-        { text: "Supplier", value: "supplier" }
-      ],
-    };
+        { text: 'Order No.', value: 'orderNumber' },
+        { text: 'Status', value: 'orderStatus' },
+        { text: 'Created On.', value: 'createDateTime' },
+        { text: 'Last Updated', value: 'lastUpdatedDateTime' },
+        { text: 'Supplier', value: 'supplier' }
+      ]
+    }
   },
   methods: {
-    ...mapActions(['getOrder']),
-    filterResourceName(resource) {
+    ...mapActions(['getOrders']),
+    filterResourceName: function(resource) {
       return resource.split('#')[1]
     }
   },
   mounted: function() {
-    this.getOrder()
+    this.getOrders()
   },
   computed: {
     items: function() {
       return this.$store.getters.getOrders
     }
+  },
+  components: {
+    UserDetailTooltip
   }
-};
+}
 </script>

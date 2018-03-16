@@ -1,4 +1,7 @@
 import axios from "axios";
+import moment from "moment";
+import { SET_ORDER, SET_ORDER_LIST } from "../actions/order";
+import { orderApi } from "../urls";
 
 const state = {
   order: {
@@ -81,6 +84,29 @@ const state = {
   orders: []
 };
 
+const dateFormat = "DD/MM/YYYY";
+const dateTimeFormat = "DD/MM/YYYY HH:mm:ss"
+
+/** utility functions */
+function convertDateTime(incomingDate) {
+  let momentObj = moment(incomingDate);
+  return momentObj.format("DD/MM/YYYY");
+}
+
+function convertAllDates(incomingState) {
+  console.log(incomingState)
+  incomingState.createDateTime = moment(incomingState.createDateTime).format(dateTimeFormat);
+  incomingState.lastUpdatedDateTime = moment(incomingState.lastUpdatedDateTime).format(dateTimeFormat);
+  incomingState.logistics.requestedShipDateRange.beginDate = moment(incomingState.logistics.requestedShipDateRange.beginDate).format(dateFormat)
+ 
+  incomingState.logistics.requestedShipDateRange.endDate = moment(incomingState.logistics.requestedShipDateRange.endDate).format(dateFormat)
+  
+  incomingState.logistics.requestedDeliveryDateRange.beginDate = moment(incomingState.logistics.requestedDeliveryDateRange.beginDate).format(dateFormat)
+ 
+  incomingState.logistics.requestedDeliveryDateRange.endDate = moment(incomingState.logistics.requestedDeliveryDateRange.endDate).format(dateFormat)
+}
+
+/** vuex functions */
 const getters = {
   getCurrentMessage() {
     return state.order;
@@ -91,25 +117,26 @@ const getters = {
 };
 
 const mutations = {
-  SET_ORDER(state, payload) {
+  [SET_ORDER] (state, payload) {
+    convertAllDates(payload);
     Object.assign(state.order, payload);
   },
-  SET_ORDER_LIST(state, payload) {
-    state.orders = payload
+  [SET_ORDER_LIST] (state, payload) {
+    payload.filter(order => convertAllDates(order))
+    state.orders = payload;
   }
 };
 
 const actions = {
-  //TODO: Get url from constant
   getOrderById({ commit }, id) {
     axios
-      .get(`/api/com.jda.models.Order/${id}`)
-      .then(res => commit("SET_ORDER", res.data));
+      .get(`${orderApi}/${id}`)
+      .then(res => commit(SET_ORDER, res.data));
   },
-  getOrder({ commit }) {
+  getOrders({ commit }) {
     axios
-      .get(`/api/com.jda.models.Order/`)
-      .then(res => commit("SET_ORDER_LIST", res.data));
+      .get(orderApi)
+      .then(res => commit(SET_ORDER_LIST, res.data));
   }
 };
 
