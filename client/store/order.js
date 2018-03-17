@@ -94,7 +94,6 @@ function convertDateTime(incomingDate) {
 }
 
 function convertAllDates(incomingState) {
-  console.log(incomingState)
   incomingState.createDateTime = moment(incomingState.createDateTime).format(dateTimeFormat);
   incomingState.lastUpdatedDateTime = moment(incomingState.lastUpdatedDateTime).format(dateTimeFormat);
   incomingState.logistics.requestedShipDateRange.beginDate = moment(incomingState.logistics.requestedShipDateRange.beginDate).format(dateFormat)
@@ -108,7 +107,7 @@ function convertAllDates(incomingState) {
 
 /** vuex functions */
 const getters = {
-  getCurrentMessage() {
+  getOrder() {
     return state.order;
   },
   getOrders() {
@@ -128,12 +127,12 @@ const mutations = {
 };
 
 const actions = {
-  getOrderById({ commit }, id) {
+  fetchOrderById({ commit }, id) {
     axios
       .get(`${orderApi}/${id}`)
       .then(res => commit(SET_ORDER, res.data));
   },
-  getOrders({ commit }) {
+  fetchOrders({ commit }) {
     axios
       .get(orderApi)
       .then(res => commit(SET_ORDER_LIST, res.data));

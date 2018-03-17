@@ -83,13 +83,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOrders']),
+    ...mapActions(['fetchOrders']),
     filterResourceName: function(resource) {
       return resource.split('#')[1]
     }
   },
   mounted: function() {
-    this.getOrders()
+    this.fetchOrders()
   },
   computed: {
     items: function() {

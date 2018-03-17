@@ -6,7 +6,7 @@
       <v-stepper-step step="3" editable>Arrived</v-stepper-step>
     </v-stepper-header>
     <v-stepper-items>
-      <v-stepper-content step="1">
+      <v-stepper-content step="1" >
         <h3>Planning</h3>
         Transaction Data <br />
         <pre>

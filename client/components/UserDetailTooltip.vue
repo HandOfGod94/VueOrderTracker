@@ -5,7 +5,7 @@
         </a> 
         <span>
           {{ userDetail.organizationName }}<br/>
-          {{userDetail.address.city}} {{userDetail.address.zip}} <br />
+          {{ userDetail.address.city }} {{ userDetail.address.zip }} <br />
           {{ userDetail.defaultEmail }} <br />
           {{ userDetail.contact }}  <br />
         </span>
