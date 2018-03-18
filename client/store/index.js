@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import order from './order'
 import ui from './ui'
 import user from './user'
+import contract from './contract'
 import integrationDetail from './integrationDetail'
 import createLogger from 'vuex/dist/logger'
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
   modules: {
     order,
     user,
+    contract,
     ui,
     integrationDetail
   },

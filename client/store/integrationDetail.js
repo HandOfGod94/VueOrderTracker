@@ -1,9 +1,8 @@
 import axios from 'axios'
-import {
-  SET_INTEGRATION_DETAIL,
-  SET_INTEGRATION_DETAILS_LIST
-} from '../actions/integrationDetail'
 import { integrationDetailApi } from '../urls'
+
+export const SET_INTEGRATION_DETAIL = 'SET_INTEGRATION_DETAIL'
+export const SET_INTEGRATION_DETAILS_LIST = 'SET_INTEGRATION_DETAILS_LIST'
 
 const state = {
   integrationDetail: {

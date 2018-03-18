@@ -1,12 +1,12 @@
 import axios from 'axios'
-import {
-  BUYER_USER_TYPE,
-  SUPPLIER_USER_TYPE,
-  CARRIER_USER_TYPE,
-  SET_USER,
-  SET_USERS_LIST
-} from '../actions/user'
-import { buyerApi, supplierApi } from '../urls'
+import { buyerApi, supplierApi, carrierApi } from '../urls'
+
+export const SET_USER = 'SET_USER'
+export const SET_USERS_LIST = 'SET_USERS_LIST'
+
+export const BUYER_USER_TYPE = 'BUYER_USER_TYPE'
+export const SUPPLIER_USER_TYPE = 'SUPPLIER_USER_TYPE'
+export const CARRIER_USER_TYPE = 'CARRIER_USER_TYPE'
 
 /** utility funtions */
 function getApiUrl(userType) {
@@ -19,7 +19,7 @@ function getApiUrl(userType) {
       url = supplierApi
       break
     case CARRIER_USER_TYPE:
-      url = ''
+      url = carrierApi
       break
     default:
       url = undefined

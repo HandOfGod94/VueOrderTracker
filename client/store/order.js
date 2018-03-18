@@ -1,14 +1,20 @@
 import Vue from 'vue'
 import axios from 'axios'
 import moment from 'moment'
-import {
-  SET_ORDER,
-  SET_ORDER_LIST,
-  SET_SUPPPLIER_ORDER
-} from '../actions/order'
 import { orderApi } from '../urls'
-import { SUPPLIER_USER_TYPE, BUYER_USER_TYPE } from '../actions/user'
-import { resourceNameToId, stripResourceName } from '../fitlers';
+import { SUPPLIER_USER_TYPE, BUYER_USER_TYPE } from './user'
+import { resourceNameToId, stripResourceName } from '../fitlers'
+
+export const SET_ORDER = 'SET_ORDER'
+export const SET_ORDER_LIST = 'SET_ORDER_LIST'
+export const SET_SUPPPLIER_ORDER = 'SET_SUPPPLIER_ORDER'
+
+export const STATUS_CREATED = 'Created'
+export const STATUS_PLANNING = 'Planning'
+export const STATUS_PLANNED = 'Planned'
+export const STATUS_IN_TRANSIT = 'InTransit'
+export const STATUS_ARRIVED = 'Arrived'
+export const STATUS_CANCELED = 'Canceled'
 
 const state = {
   order: {
@@ -83,8 +89,8 @@ const state = {
         }
       }
     ],
-    contract: 'resource:com.jda.models.Contract#Contract100',
-    buyer: '',
+    contract: {},
+    buyer: {},
     supplier: {},
     integrationDetails: []
   },
@@ -116,11 +122,9 @@ const mutations = {
 }
 
 const actions = {
-  fetchOrderById({dispatch, commit}, id) {
+  fetchOrderById({ dispatch, commit }, id) {
     let url = `${orderApi}/${id}`
-    const orderInfo = axios.get(url)
-
-    orderInfo.then(res => {
+    return axios.get(url).then(res => {
       //supplier info
       let supplierId = resourceNameToId(res.data.supplier)
       let supplierInfo = dispatch('fetchUserByIdAndType', {
@@ -135,26 +139,38 @@ const actions = {
         userType: BUYER_USER_TYPE
       })
 
+      //contract info
+      let contractId = stripResourceName(res.data.contract)
+      let contractInfo = dispatch('fetchContractById', contractId)
+
       //Integration details
       let integrateInfoPromise = [] //Array of prmoises for all the integration details
-      res.data.integrationDetails.filter( (detail) => {
+      res.data.integrationDetails.filter(detail => {
         let documentId = stripResourceName(detail) //Why this not caps??
         let documentInfo = dispatch('fetchIntegrationDetailById', documentId)
         integrateInfoPromise.push(documentInfo)
       })
 
-      const allPromises = [supplierInfo, buyerInfo, ...integrateInfoPromise]
+      // write everythign to order. Phew
+      const allPromises = [
+        supplierInfo,
+        buyerInfo,
+        contractInfo,
+        ...integrateInfoPromise
+      ]
       Promise.all(allPromises).then(
-        ([supplierInfo, buyerInfo, ...integrateInfoPromise]) => {
-        res.data.supplier = supplierInfo.data
-        res.data.buyerInfo = buyerInfo.data
-        let intDetails = []
-        integrateInfoPromise.filter(detail => intDetails.push(detail.data))
-        res.data.integrationDetails = intDetails
-        console.log(res.data)
-        commit(SET_ORDER, res.data)
-      })
-      
+        ([supplierInfo, buyerInfo, contractInfo, ...integrateInfoPromise]) => {
+          res.data.supplier = supplierInfo.data
+          res.data.buyerInfo = buyerInfo.data
+          res.data.contract = contractInfo.data
+
+          let intDetails = []
+          integrateInfoPromise.filter(detail => intDetails.push(detail.data))
+          res.data.integrationDetails = intDetails
+          commit(SET_ORDER, res.data)
+        }
+      )
+      return res
     })
   },
   fetchOrders({ dispatch, commit }) {

@@ -27,31 +27,21 @@
 
 <script>
 import { mapActions } from 'vuex'
-import {
-  STATUS_CREATED,
-  STATUS_PLANNING,
-  STATUS_PLANNED,
-  STATUS_IN_TRANSIT,
-  STATUS_ARRIVED,
-  STATUS_CANCELED
-} from '../actions/order'
 import StatusDetail from '../components/StatusDetail.vue'
 
 export default {
   data: function() {
     return {
       orderStatus: 'STATUS_INITIAL',
-      currentStep: 0,
-      STATUS_CREATED: STATUS_CREATED,
-      STATUS_PLANNING: STATUS_PLANNING,
-      STATUS_PLANNED: STATUS_PLANNED,
-      STATUS_IN_TRANSIT: STATUS_IN_TRANSIT,
-      STATUS_ARRIVED: STATUS_ARRIVED,
-      STATUS_CANCELED: STATUS_CANCELED
+      currentStep: 0
     }
   },
   methods: {
     ...mapActions(['fetchOrderById'])
+  },
+  beforeRouteUpdate: function(to, from, next){
+    this.fetchOrderById(to.params.orderId)
+    next()
   },
   mounted: function() {
     this.fetchOrderById(this.$route.params.orderId)
