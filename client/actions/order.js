@@ -1,5 +1,6 @@
 export const SET_ORDER = 'SET_ORDER'
 export const SET_ORDER_LIST = 'SET_ORDER_LIST'
+export const SET_SUPPPLIER_ORDER = 'SET_SUPPPLIER_ORDER'
 
 export const STATUS_CREATED = 'Created'
 export const STATUS_PLANNING = 'Planning'

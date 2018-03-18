@@ -19,10 +19,10 @@ export default {
   name: 'user-detail-tooltip',
   props: ['userId', 'userType'],
   methods: {
-    ...mapActions(['getUserByIdAndType'])
+    ...mapActions(['fetchUserByIdAndType'])
   },
   mounted: function() {
-    this.getUserByIdAndType({ userId: this.userId, userType: this.userType })
+    this.fetchUserByIdAndType({ userId: this.userId.toUpperCase(), userType: this.userType })
   },
   computed: {
     userDetail: function() {

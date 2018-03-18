@@ -19,7 +19,7 @@
     </v-layout>
     <v-layout>
       <v-flex xs6 offset-xs3>
-    <status-detail :order="order" ></status-detail>
+        <status-detail :order="order" ></status-detail>
       </v-flex>
     </v-layout>
   </div>

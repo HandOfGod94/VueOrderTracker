@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import order from './order'
 import ui from './ui'
 import user from './user'
+import integrationDetail from './integrationDetail'
 import createLogger from 'vuex/dist/logger'
 
 Vue.use(Vuex)
@@ -13,7 +14,8 @@ export default new Vuex.Store({
   modules: {
     order,
     user,
-    ui
+    ui,
+    integrationDetail
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

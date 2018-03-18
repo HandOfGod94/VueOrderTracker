@@ -23,10 +23,10 @@
           <td>
             <v-chip color="primary" text-color="white">{{ props.item.orderStatus }}</v-chip>
           </td>
-          <td>{{ props.item.createDateTime }}</td>
-          <td>{{ props.item.lastUpdatedDateTime }}</td>
+          <td>{{ props.item.createDateTime | formatDateTime }}</td>
+          <td>{{ props.item.lastUpdatedDateTime | formatDateTime }}</td>
           <td> 
-              <user-detail-tooltip :userId="filterResourceName(props.item.supplier)" userType="SUPPLIER_USER_TYPE">
+              <user-detail-tooltip :userId="props.item.supplier | stripResourceName" userType="SUPPLIER_USER_TYPE">
               </user-detail-tooltip>
           </td>
         </tr>
@@ -46,11 +46,11 @@
               </v-list-tile-content>
               <v-list-tile-content>
                <v-list-tile-title>Delivery Date Range</v-list-tile-title>
-               <v-list-tile-sub-title>{{ props.item.logistics.requestedDeliveryDateRange.beginDate }} To {{ props.item.logistics.requestedDeliveryDateRange.endDate }} </v-list-tile-sub-title>
+               <v-list-tile-sub-title>{{ props.item.logistics.requestedDeliveryDateRange.beginDate | formatDate }} To {{ props.item.logistics.requestedDeliveryDateRange.endDate | formatDate }} </v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-content>
                <v-list-tile-title>Ship Date Range</v-list-tile-title>
-               <v-list-tile-sub-title>{{ props.item.logistics.requestedShipDateRange.beginDate }} To {{ props.item.logistics.requestedShipDateRange.endDate }} </v-list-tile-sub-title>
+               <v-list-tile-sub-title>{{ props.item.logistics.requestedShipDateRange.beginDate | formatDate }} To {{ props.item.logistics.requestedShipDateRange.endDate | formatDate }} </v-list-tile-sub-title>
              </v-list-tile-content>
            </v-list-tile>
           </v-list>

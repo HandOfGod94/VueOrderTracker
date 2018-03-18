@@ -5,6 +5,7 @@ import App from './components/App'
 import router from './router'
 import store from './store'
 import Vuetify from 'vuetify'
+import './fitlers'
  
 Vue.use(Vuetify)
 sync(store, router)

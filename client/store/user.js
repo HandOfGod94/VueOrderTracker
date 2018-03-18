@@ -65,13 +65,21 @@ const mutations = {
 
 const actions = {
   fetchUserByIdAndType({ commit }, { userId, userType }) {
-    let url = getApiUrl(userType)
-    url = `${url}/${userId.toUpperCase()}` //TODO: Figure out why it requires uppercase
-    axios.get(url).then(res => commit(SET_USER, res.data))
+    if (userId) {
+      let url = getApiUrl(userType)
+      url = `${url}/${userId}` //TODO: Figure out why it requires uppercase
+      return axios.get(url).then(res => {
+        commit(SET_USER, res.data)
+        return res
+      })
+    }
   },
   fetchUsersByType({ commit }, userType) {
     let url = getApiUrl(userType)
-    axios.get(url).then(res => commit(SET_USERS_LIST, res.data))
+    return axios.get(url).then(res => {
+      commit(SET_USERS_LIST, res.data)
+      return res
+    })
   }
 }
 
