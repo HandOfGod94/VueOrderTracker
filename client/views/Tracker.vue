@@ -2,7 +2,7 @@
   <div>
     <v-layout row>
       <v-flex xs6 offset-xs3>
-        <v-stepper alt-labels v-model="currentTrackerStep">
+        <v-stepper alt-labels v-model="currentTrackerStep" class="roundedStepper">
           <v-stepper-header>
             <v-stepper-step step="1" :complete="currentTrackerStep > 1" editable edit-icon="shopping_cart"> Created </v-stepper-step>
             <v-divider />
@@ -48,7 +48,7 @@ export default {
   },
   timers: {
     checkOrderStatus: {
-      time: 8000,
+      time: 5000,
       autostart: true,
       immediate: true,
       repeat: true
@@ -93,7 +93,7 @@ export default {
     }
   },
   beforeRouteUpdate: function(to, from, next) {
-    this.fetchOrderById(to.params.orderId)
+    //fetchin records will be handeled by timer
     this.UPDATE_TRACKER_STEP(1) //reset tracker on change of order
     next()
   },
@@ -115,3 +115,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.roundedStepper{
+  border-radius: 100px
+}
+</style>
+

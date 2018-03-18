@@ -28,9 +28,12 @@
     <v-divider />
     <v-container class="text-md-center">
       <div class="headline">Integration detail</div>
-      <div v-for="item in order.integrationDetails" :key="item.DocumentId">
-        <code>Status={{item.Status}}, Action={{item.orderAction}}, Direction={{item.Direction}}, Soruce={{item.sourceComp.ComponentName}}, Destination={{item.destComp.ComponentName}}</code>
-      </div>
+      <span v-if="order.integrationDetails != undefined && order.integrationDetails.length > 0">
+        <div v-for="item in order.integrationDetails" :key="item.DocumentId">
+          <code>Status={{item.Status}}, Action={{item.orderAction}}, Direction={{item.Direction}}, Soruce={{item.sourceComp.ComponentName}}, Destination={{item.destComp.ComponentName}}</code>
+        </div>
+      </span>
+      <div v-else> <v-progress-circular indeterminate color="primary"></v-progress-circular> </div>
     </v-container>
     <v-divider />
     <v-container >
@@ -51,7 +54,7 @@
       </v-flex>
       <v-flex xs6 class="text-md-center">
         <div class="headline">Carrier detail</div>
-        <div class="body-1" v-if="order.contract.carrier != undefined">
+        <div class="body-1" v-if="order.contract!= undefined && order.contract.carrier != undefined">
             Organization: {{ order.contract.carrier.organizationName }}<br />
             Contact: {{ order.contract.supplier.contact }}<br />
             Default {{ order.contract.carrier.defaultEmail }}<br />

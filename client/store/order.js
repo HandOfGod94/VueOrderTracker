@@ -125,6 +125,8 @@ const actions = {
   fetchOrderById({ dispatch, commit }, id) {
     let url = `${orderApi}/${id}`
     return axios.get(url).then(res => {
+      const allPromises = []
+
       //supplier info
       let supplierId = resourceNameToId(res.data.supplier)
       let supplierInfo = dispatch('fetchUserByIdAndType', {
@@ -139,34 +141,45 @@ const actions = {
         userType: BUYER_USER_TYPE
       })
 
+      allPromises.push(supplierInfo, buyerInfo)
+
       //contract info
-      let contractId = stripResourceName(res.data.contract)
-      let contractInfo = dispatch('fetchContractById', contractId)
+      if (res.data.contract) {
+        let contractId = stripResourceName(res.data.contract)
+        let contractInfo = dispatch('fetchContractById', contractId)
+        allPromises.push(contractInfo)
+      }
 
       //Integration details
       let integrateInfoPromise = [] //Array of prmoises for all the integration details
-      res.data.integrationDetails.filter(detail => {
-        let documentId = stripResourceName(detail) //Why this not caps??
-        let documentInfo = dispatch('fetchIntegrationDetailById', documentId)
-        integrateInfoPromise.push(documentInfo)
-      })
+      if (res.data.integrationDetails && res.data.integrationDetails.length > 0) {
+        res.data.integrationDetails.filter(detail => {
+          let documentId = stripResourceName(detail) //Why this not caps??
+          let documentInfo = dispatch('fetchIntegrationDetailById', documentId)
+          integrateInfoPromise.push(documentInfo)
+        })
+        integrateInfoPromise.filter(promise => allPromises.push(promise))
+      }
 
-      // write everythign to order. Phew
-      const allPromises = [
-        supplierInfo,
-        buyerInfo,
-        contractInfo,
-        ...integrateInfoPromise
-      ]
       Promise.all(allPromises).then(
-        ([supplierInfo, buyerInfo, contractInfo, ...integrateInfoPromise]) => {
+        ([supplierInfo, buyerInfo, ...integrateInfoPromise]) => {
+          console.log(allPromises)
           res.data.supplier = supplierInfo.data
           res.data.buyerInfo = buyerInfo.data
-          res.data.contract = contractInfo.data
+          if (res.data.contract) {
+            let contractInfo = integrateInfoPromise[0]
+            res.data.contract = contractInfo.data
+            console.log(res.data)
+          }
 
-          let intDetails = []
-          integrateInfoPromise.filter(detail => intDetails.push(detail.data))
-          res.data.integrationDetails = intDetails
+          if(res.data.integrationDetails) {
+            let intDetails = []
+            if(res.data.contract) {
+              integrateInfoPromise = integrateInfoPromise.slice(1)
+            }
+            integrateInfoPromise.filter(detail => intDetails.push(detail.data))
+            res.data.integrationDetails = intDetails
+          }
           commit(SET_ORDER, res.data)
         }
       )

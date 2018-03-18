@@ -19,7 +19,7 @@
       :search="search">
       <template slot="items" slot-scope="props">
        <tr @click="props.expanded = !props.expanded">
-          <td>{{ props.item.orderNumber }}</td>
+          <td> <a> <router-link :to="{ name:'Tracker', params: {orderId: props.item.orderNumber } }"> {{ props.item.orderNumber }} </router-link> </a> </td>
           <td>
             <v-chip color="primary" text-color="white">{{ props.item.orderStatus }}</v-chip>
           </td>
@@ -70,6 +70,14 @@ import UserDetailTooltip from '../components/UserDetailTooltip'
 
 export default {
   name: 'order-detail',
+  timers: {
+    fetchOrders: {
+      time: 10000,
+      autostart: true,
+      immediate: true,
+      repeat: true
+    }
+  },
   data() {
     return {
       search: '',
@@ -83,13 +91,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchOrders']),
-    filterResourceName: function(resource) {
-      return resource.split('#')[1]
-    }
-  },
-  mounted: function() {
-    this.fetchOrders()
+    ...mapActions(['fetchOrders'])
   },
   computed: {
     items: function() {

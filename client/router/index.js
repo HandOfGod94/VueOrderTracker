@@ -15,6 +15,7 @@ export default new Router({
     },
     {
       path: '/Tracker/:orderId',
+      name: 'Tracker',
       component: Tracker
     }
   ]
