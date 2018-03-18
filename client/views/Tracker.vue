@@ -22,7 +22,7 @@
         <status-detail :order="order" ></status-detail>
       </v-flex>
     </v-layout>
-    <v-btn @click="checkOrderStatus($route.params.orderId)" >Update Order</v-btn>
+    <!-- <v-btn @click="checkOrderStatus($route.params.orderId)" >Update Order</v-btn> -->
   </div>
 </template>
 
@@ -46,11 +46,20 @@ export default {
       currentStep: 0
     }
   },
+  timers: {
+    checkOrderStatus: {
+      time: 8000,
+      autostart: true,
+      immediate: true,
+      repeat: true
+    }
+  },
   methods: {
     ...mapActions(['fetchOrderById']),
     ...mapMutations([`${UPDATE_TRACKER_STEP}`]),
     checkOrderStatus: function(orderId) {
       let prevOrderState = JSON.parse(JSON.stringify(this.order))
+      let self = this
       this.fetchOrderById(this.$route.params.orderId).then(res => {
         let newOrderState = JSON.parse(JSON.stringify(res.data))
         if (newOrderState.orderStatus != prevOrderState.orderStatus) {
@@ -58,6 +67,7 @@ export default {
           switch (newOrderState.orderStatus) {
             case STATUS_CREATED:
               newStep = 1
+              break
               break
             case STATUS_PLANNING:
               newStep = 2
@@ -70,11 +80,14 @@ export default {
               break
             case STATUS_ARRIVED:
               newStep = 5
+              self.$timer.stop('checkOrderStatus')
               break
             case STATUS_CANCELED:
               newStep = 6
+              self.$timer.stop('checkOrderStatus')
+              break
           }
-          this.UPDATE_TRACKER_STEP(newStep)
+          self.UPDATE_TRACKER_STEP(newStep)
         }
       }) // fetch new order
     }
@@ -83,31 +96,6 @@ export default {
     this.fetchOrderById(to.params.orderId)
     this.UPDATE_TRACKER_STEP(1) //reset tracker on change of order
     next()
-  },
-  mounted: function() {
-    this.fetchOrderById(this.$route.params.orderId).then(res => {
-      let newStep = -1
-      switch (res.data.orderStatus) {
-        case STATUS_CREATED:
-          newStep = 1
-          break
-        case STATUS_PLANNING:
-          newStep = 2
-          break
-        case STATUS_PLANNED:
-          newStep = 3
-          break
-        case STATUS_IN_TRANSIT:
-          newStep = 4
-          break
-        case STATUS_ARRIVED:
-          newStep = 5
-          break
-        case STATUS_CANCELED:
-          newStep = 6
-      }
-      this.UPDATE_TRACKER_STEP(newStep)
-    })
   },
   computed: {
     order: function() {
