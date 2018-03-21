@@ -56,7 +56,7 @@ const getters = {
 
 const mutations = {
   [SET_USER](state, payload) {
-    Object.assign(state.user, payload)
+    state.user = payload
   },
   [SET_USERS_LIST](state, payload) {
     state.users = payload

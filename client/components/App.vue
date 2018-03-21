@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <v-app v-if="isLoggedIn">
-    <m-top-bar></m-top-bar>
+    <v-app>
+    <m-top-bar ref="topBar"></m-top-bar>
     <v-content>
       <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-content>
     </v-app>
-    <login v-else></login>
   </div>
 </template>
 
@@ -18,10 +17,19 @@ import Login from '../views/Login.vue'
 
 export default {
   name: 'App',
-  data: function() {
-    return({
-      isLoggedIn: true //get it from session
-    })
+  created: function() {
+    if(this.$session.get('accountId') && this.$session.get('accountId')!='') {
+      this.$router.push({name:'OrderDetail'})
+    } else {
+      this.$router.push({name: 'index'})
+    }
+  },
+  computed: {
+    isLoggedIn() {
+      if(this.$session.get('isLoggedIn'))
+        return true
+      return false
+    }
   },
   components: {
     MTopBar,

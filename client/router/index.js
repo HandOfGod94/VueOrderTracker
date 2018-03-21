@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../views/Home'
+import Login from '../views/Login'
 import OrderDetail from '../views/OrderDetail'
 import Tracker from '../views/Tracker'
 
@@ -11,6 +11,12 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'index',
+      component: Login
+    },
+    {
+      path: '/OrderDetail',
+      name:'OrderDetail',
       component: OrderDetail 
     },
     {

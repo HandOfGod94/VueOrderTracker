@@ -3,7 +3,7 @@
     <v-card>
       <v-container >
     <v-layout row>
-      <v-flex md11 offset-md1>
+      <v-flex lg11 offset-lg1>
         <div class="headline">Order</div>
           <div class="body-1" v-if="order.createDateTime != ''">
             <div class="subheading">{{order.orderNumber}}</div>
@@ -39,8 +39,9 @@
     <v-container >
       <v-layout>
       <v-flex xs6 class="text-md-center">
-        <div class="headline">Supplier</div>
-          <div class="body-1" v-if="order.supplier.id != undefined">
+        <div class="headline" v-if="accountType === 'buyer'">Supplier</div>
+        <div class="headline" v-else-if="accountType === 'supplier'">Buyer</div>
+          <div class="body-1" v-if="order.supplier.id != undefined && accountType === 'buyer'">
             Organization: {{ order.supplier.organizationName }}<br />
             Contact: {{ order.supplier.contact }}<br />
             Default {{ order.supplier.defaultEmail }}<br />
@@ -49,6 +50,16 @@
             {{ order.supplier.address.city }}, 
             {{ order.supplier.address.country }} 
             {{ order.supplier.address.zip }} <br />
+          </div>
+          <div class="body-1" v-else-if="order.buyer.id != undefined && accountType === 'supplier'">
+            Organization: {{ order.buyer.organizationName }}<br />
+            Contact: {{ order.buyer.contact }}<br />
+            Default {{ order.buyer.defaultEmail }}<br />
+            Address:
+            {{ order.buyer.address.street }},
+            {{ order.buyer.address.city }}, 
+            {{ order.buyer.address.country }} 
+            {{ order.buyer.address.zip }} <br />
           </div>
           <div v-else> <v-progress-circular indeterminate color="primary"></v-progress-circular> </div>
       </v-flex>
@@ -75,7 +86,15 @@
 <script>
 export default {
   name: 'status-detail',
-  props: ['order']
+  props: ['order'],
+  mounted: function() {
+    console.log(this.accountType)
+  },
+  computed: {
+    accountType: function() {
+      return this.$store.state.ui.accountType
+    }
+  }
 }
 </script>
 

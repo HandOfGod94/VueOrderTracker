@@ -3,7 +3,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { orderApi } from '../urls'
 import { SUPPLIER_USER_TYPE, BUYER_USER_TYPE } from './user'
-import { resourceNameToId, stripResourceName } from '../fitlers'
+import { stripResourceName } from '../fitlers'
 
 export const SET_ORDER = 'SET_ORDER'
 export const SET_ORDER_LIST = 'SET_ORDER_LIST'
@@ -128,20 +128,21 @@ const actions = {
       const allPromises = []
 
       //supplier info
-      let supplierId = resourceNameToId(res.data.supplier)
+      let supplierId = stripResourceName(res.data.supplier)
       let supplierInfo = dispatch('fetchUserByIdAndType', {
         userId: supplierId,
         userType: SUPPLIER_USER_TYPE
       })
 
       //buyer info
-      let buyerId = resourceNameToId(res.data.buyer)
+      let buyerId = stripResourceName(res.data.buyer)
       let buyerInfo = dispatch('fetchUserByIdAndType', {
         userId: buyerId,
         userType: BUYER_USER_TYPE
       })
 
-      allPromises.push(supplierInfo, buyerInfo)
+      allPromises.push(supplierInfo)
+      allPromises.push(buyerInfo)
 
       //contract info
       if (res.data.contract) {
@@ -152,7 +153,10 @@ const actions = {
 
       //Integration details
       let integrateInfoPromise = [] //Array of prmoises for all the integration details
-      if (res.data.integrationDetails && res.data.integrationDetails.length > 0) {
+      if (
+        res.data.integrationDetails &&
+        res.data.integrationDetails.length > 0
+      ) {
         res.data.integrationDetails.filter(detail => {
           let documentId = stripResourceName(detail) //Why this not caps??
           let documentInfo = dispatch('fetchIntegrationDetailById', documentId)
@@ -163,18 +167,17 @@ const actions = {
 
       Promise.all(allPromises).then(
         ([supplierInfo, buyerInfo, ...integrateInfoPromise]) => {
-          console.log(allPromises)
           res.data.supplier = supplierInfo.data
-          res.data.buyerInfo = buyerInfo.data
+          res.data.buyer = buyerInfo.data
+          console.log(res.data)
           if (res.data.contract) {
             let contractInfo = integrateInfoPromise[0]
             res.data.contract = contractInfo.data
-            console.log(res.data)
           }
 
-          if(res.data.integrationDetails) {
+          if (res.data.integrationDetails) {
             let intDetails = []
-            if(res.data.contract) {
+            if (res.data.contract) {
               integrateInfoPromise = integrateInfoPromise.slice(1)
             }
             integrateInfoPromise.filter(detail => intDetails.push(detail.data))
@@ -186,8 +189,15 @@ const actions = {
       return res
     })
   },
-  fetchOrders({ dispatch, commit }) {
-    return axios.get(orderApi).then(res => commit(SET_ORDER_LIST, res.data))
+  fetchOrders({ dispatch, commit, rootState }) {
+    let urlParams = rootState.ui.orderApiParams
+    let accountType = rootState.ui.accountType
+    if (urlParams)
+      return axios
+        .get(orderApi, { params: { [accountType]: urlParams[accountType] } })
+        .then(res => commit(SET_ORDER_LIST, res.data))
+    else
+      return axios.get(orderApi).then(res => commit(SET_ORDER_LIST, res.data))
   }
 }
 

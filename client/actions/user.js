@@ -1,6 +1,0 @@
-export const SET_USER = 'SET_USER'
-export const SET_USERS_LIST = 'SET_USERS_LIST'
-
-export const BUYER_USER_TYPE = 'BUYER_USER_TYPE'
-export const SUPPLIER_USER_TYPE = 'SUPPLIER_USER_TYPE'
-export const CARRIER_USER_TYPE = 'CARRIER_USER_TYPE'

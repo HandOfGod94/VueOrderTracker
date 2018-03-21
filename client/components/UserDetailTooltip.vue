@@ -1,6 +1,6 @@
 <template>
     <v-tooltip bottom>
-        <a slot="activator">
+        <a slot="activator" @mouseover="fetchData" @mouseout="resetLoading">
           {{ userId }} 
         </a> 
         <span>
@@ -21,8 +21,17 @@ export default {
   methods: {
     ...mapActions(['fetchUserByIdAndType'])
   },
-  mounted: function() {
-    this.fetchUserByIdAndType({ userId: this.userId.toUpperCase(), userType: this.userType })
+  data: {
+    isLoading: true
+  },
+  methods: {
+    fetchData: function() {
+      let self = this
+      this.fetchUserByIdAndType({ userId: this.userId, userType: this.userType }).then(() => self.isLoading = true)
+    },
+    resetLoading: function() {
+      this.isLoading = true
+    }
   },
   computed: {
     userDetail: function() {
