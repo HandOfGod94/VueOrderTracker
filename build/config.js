@@ -6,7 +6,7 @@ module.exports = {
   // Options for webpack-dev-server
   // See https://webpack.js.org/configuration/dev-server
   devServer: {
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 4000,
     proxy: {
       '/**': 'http://localhost:3000'

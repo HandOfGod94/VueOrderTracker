@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import moment from 'moment'
 import { orderApi } from '../urls'
-import { SUPPLIER_USER_TYPE, BUYER_USER_TYPE } from './user'
+import { SUPPLIER_USER_TYPE, BUYER_USER_TYPE, CARRIER_USER_TYPE } from './user'
 import { stripResourceName } from '../fitlers'
 
 export const SET_ORDER = 'SET_ORDER'
@@ -90,6 +90,7 @@ const state = {
       }
     ],
     contract: {},
+    carrier: {},
     buyer: {},
     supplier: {},
     integrationDetails: []
@@ -106,6 +107,9 @@ const getters = {
   },
   getLogistics() {
     return state.order.logistics
+  },
+  getOrderStatus() {
+    return state.order.orderStatus
   }
 }
 
@@ -141,8 +145,19 @@ const actions = {
         userType: BUYER_USER_TYPE
       })
 
+
       allPromises.push(supplierInfo)
       allPromises.push(buyerInfo)
+
+      //carrier info
+      if (res.data.carrier) {
+        let carrierId = stripResourceName(res.data.carrier)
+        let carrierInfo = dispatch('fetchUserByIdAndType', {
+          userId: carrierId,
+          userType: CARRIER_USER_TYPE
+        })
+        allPromises.push(carrierInfo)
+      }
 
       //contract info
       if (res.data.contract) {
@@ -165,22 +180,31 @@ const actions = {
         integrateInfoPromise.filter(promise => allPromises.push(promise))
       }
 
+      // futureDetais are the details which we get in the later stage
+      // in order flow.
+      // 1. integration Details (in planning stage)
+      // 2. Carrier Details and Contract Details ( in planned Stage)
+      // NOTE: Since carrierDetails promise is pused before contractDetails, we have
+      // add to order detail accordingly
       Promise.all(allPromises).then(
-        ([supplierInfo, buyerInfo, ...integrateInfoPromise]) => {
+        ([supplierInfo, buyerInfo, ...futureDetails]) => {
           res.data.supplier = supplierInfo.data
           res.data.buyer = buyerInfo.data
-          console.log(res.data)
-          if (res.data.contract) {
-            let contractInfo = integrateInfoPromise[0]
+
+          if (res.data.carrier) {
+            // we are already in planned stage
+            let carrierInfo = futureDetails[0]
+            let contractInfo = futureDetails[1]
+            res.data.carrier = carrierInfo.data
             res.data.contract = contractInfo.data
           }
 
           if (res.data.integrationDetails) {
             let intDetails = []
-            if (res.data.contract) {
-              integrateInfoPromise = integrateInfoPromise.slice(1)
+            if (res.data.carrier) {
+              futureDetails = futureDetails.slice(2)
             }
-            integrateInfoPromise.filter(detail => intDetails.push(detail.data))
+            futureDetails.filter(detail => intDetails.push(detail.data))
             res.data.integrationDetails = intDetails
           }
           commit(SET_ORDER, res.data)
@@ -191,12 +215,17 @@ const actions = {
   },
   fetchOrders({ dispatch, commit, rootState }) {
     let urlParams = rootState.ui.orderApiParams
-    let accountType = rootState.ui.accountType
-    if (urlParams)
+    if (urlParams) {
+      let key = Object.keys(urlParams)[0]
+      let value = urlParams[key]
       return axios
-        .get(orderApi, { params: { [accountType]: urlParams[accountType] } })
+        .get(orderApi, {
+          params: {
+            filter: { where: { [key]: value } }
+          }
+        })
         .then(res => commit(SET_ORDER_LIST, res.data))
-    else
+    } else
       return axios.get(orderApi).then(res => commit(SET_ORDER_LIST, res.data))
   }
 }

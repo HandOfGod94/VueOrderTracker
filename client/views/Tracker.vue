@@ -4,31 +4,40 @@
       <v-flex xs6 offset-xs3>
         <v-stepper alt-labels v-model="currentTrackerStep" class="roundedStepper">
           <v-stepper-header>
-            <v-stepper-step step="1" :complete="currentTrackerStep > 1" complete-icon="shopping_cart"> Created </v-stepper-step>
-            <v-divider />
-            <v-stepper-step step="2" :complete="currentTrackerStep > 2" complete-icon="assignment"> Planning </v-stepper-step>
-            <v-divider />
-            <v-stepper-step step="3" :complete="currentTrackerStep > 3" complete-icon="assessment"> Planned </v-stepper-step>
-            <v-divider />
-            <v-stepper-step step="4" :complete="currentTrackerStep > 4" complete-icon="flight_takeoff"> In-Transit </v-stepper-step>
-            <v-divider />
-            <v-stepper-step step="5" :complete="currentTrackerStep > 5" > Arrived </v-stepper-step>
+            <template v-for="(stepper,index) in steppers">
+              <v-stepper-step
+                :key="index"
+                :step="index + 1" 
+                :complete="currentTrackerStep > index + 1"
+                :complete-icon="stepper.icon"> {{ stepper.text }} </v-stepper-step>
+                <v-divider v-if="index < 4" />
+            </template>
           </v-stepper-header>
         </v-stepper>
       </v-flex>
     </v-layout>
     <v-layout>
       <v-flex xs6 offset-xs3>
-        <status-detail :order="order" ></status-detail>
+        <tracker-detail :order="order">
+          <user-detail 
+            slot="bottom-left" 
+            :user="bottomLeftUser" 
+            :title="bottomLeftTitle"
+            v-if="bottomLeftUser && bottomLeftUser.organizationName"></user-detail>
+          <user-detail 
+            slot="bottom-right" 
+            :user="bottomRightUser" 
+            :title="bottomRightTitle"
+            v-if="bottomRightUser && bottomRightUser.organizationName"></user-detail>
+        </tracker-detail>
       </v-flex>
     </v-layout>
-    <!-- <v-btn @click="checkOrderStatus($route.params.orderId)" >Update Order</v-btn> -->
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
-import StatusDetail from '../components/StatusDetail.vue'
+import { mapActions, mapMutations, mapState } from 'vuex'
+import TrackerDetail from '../components/TrackerDetail.vue'
 import { UPDATE_TRACKER_STEP } from '../store/ui'
 import {
   STATUS_CREATED,
@@ -38,12 +47,27 @@ import {
   STATUS_ARRIVED,
   STATUS_CANCELED
 } from '../store/order'
+import UserDetail from '../components/UserDetail'
+import {
+  BUYER_USER_TYPE,
+  SUPPLIER_USER_TYPE,
+  CARRIER_USER_TYPE
+} from '../store/user'
 
 export default {
   data: function() {
     return {
       orderStatus: 'STATUS_INITIAL',
-      currentStep: 0
+      currentStep: 0,
+      bottomLeftTitle: '',
+      bottomRightTitle: '',
+      steppers: [
+        { icon: 'shopping_cart', text: STATUS_CREATED },
+        { icon: 'assignment', text: STATUS_PLANNING },
+        { icon: 'assessment', text: STATUS_PLANNED },
+        { icon: 'flight_takeoff', text: STATUS_IN_TRANSIT },
+        { icon: 'check', text: STATUS_ARRIVED }
+      ]
     }
   },
   timers: {
@@ -57,9 +81,8 @@ export default {
   methods: {
     ...mapActions(['fetchOrderById']),
     ...mapMutations([`${UPDATE_TRACKER_STEP}`]),
-    checkOrderStatus: function(orderId) {
+    checkOrderStatus: function() {
       let prevOrderState = JSON.parse(JSON.stringify(this.order))
-      let self = this
       this.fetchOrderById(this.$route.params.orderId).then(res => {
         let newOrderState = JSON.parse(JSON.stringify(res.data))
         if (newOrderState.orderStatus != prevOrderState.orderStatus) {
@@ -67,7 +90,6 @@ export default {
           switch (newOrderState.orderStatus) {
             case STATUS_CREATED:
               newStep = 1
-              break
               break
             case STATUS_PLANNING:
               newStep = 2
@@ -80,14 +102,14 @@ export default {
               break
             case STATUS_ARRIVED:
               newStep = 5
-              self.$timer.stop('checkOrderStatus')
+              this.$timer.stop('checkOrderStatus')
               break
             case STATUS_CANCELED:
               newStep = 6
-              self.$timer.stop('checkOrderStatus')
+              this.$timer.stop('checkOrderStatus')
               break
           }
-          self.UPDATE_TRACKER_STEP(newStep)
+          this.UPDATE_TRACKER_STEP(newStep)
         }
       }) // fetch new order
     }
@@ -98,8 +120,31 @@ export default {
     next()
   },
   computed: {
-    order: function() {
-      return this.$store.getters.getOrder
+    ...mapState({
+      order: state => state.order.order,
+      accountType: state => state.ui.accountType
+    }),
+    bottomLeftUser: function() {
+      switch (this.accountType) {
+        case BUYER_USER_TYPE:
+        case CARRIER_USER_TYPE:
+          this.bottomLeftTitle = 'Supplier'
+          return this.order.supplier
+        case SUPPLIER_USER_TYPE:
+          this.bottomLeftTitle = 'Buyer'
+          return this.order.buyer
+      }
+    },
+    bottomRightUser: function() {
+      switch (this.accountType) {
+        case BUYER_USER_TYPE:
+        case SUPPLIER_USER_TYPE:
+          this.bottomRightTitle = 'Carrier'
+          return this.order.carrier
+        case CARRIER_USER_TYPE:
+          this.bottomRightTitle = 'Supplier'
+          return this.order.supplier
+      }
     },
     currentTrackerStep: {
       get() {
@@ -111,14 +156,15 @@ export default {
     }
   },
   components: {
-    StatusDetail
+    TrackerDetail,
+    UserDetail
   }
 }
 </script>
 
 <style>
-.roundedStepper{
-  border-radius: 100px
+.roundedStepper {
+  border-radius: 100px;
 }
 </style>
 

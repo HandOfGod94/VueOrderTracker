@@ -4,19 +4,18 @@
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
-              <v-toolbar dark>
+              <v-toolbar dark color="primary">
                 <v-toolbar-title>Sign In to continue</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form>
                   <v-select :items="items" prepend-icon="person" item-value="value" v-model="accountType" label="Select Account Type"></v-select> 
-                  <!-- <v-text-field prepend-icon="person" name="login" label="Login" type="text"></v-text-field> -->
                   <v-text-field v-model="userId" prepend-icon="lock" name="userId" label="UserID" id="UserID" type="text"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn dark @click="saveToSession">Login</v-btn>
+                <v-btn dark color="primary" @click="saveToSession">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -45,7 +44,7 @@ export default {
   created: function() {
     if(this.$session.get('accountId') && this.$session.get('accountId')!='')
     {
-      this.$router.push({ name:'OrderDetail' })
+      this.$router.push({ name:'OrderList' })
     } else {
       this.$session.clear()
       this.$session.destroy()
@@ -64,7 +63,7 @@ export default {
         userId: this.userId
       })
 
-      this.$router.push({name:'OrderDetail'})
+      this.$router.push({name:'OrderList'})
     }
   }
 }

@@ -22,23 +22,25 @@ const mutations = {
     switch (userAccountType) {
       case BUYER_USER_TYPE:
         resourceString = 'resource:com.jda.models.Buyer#'
+        state.accountType = BUYER_USER_TYPE
         paramName = 'buyer'
         break
       case SUPPLIER_USER_TYPE:
         resourceString = 'resource:com.jda.models.Supplier#'
+        state.accountType = SUPPLIER_USER_TYPE
         paramName = 'supplier'
         break
-      default:
-        resourceString = 'resource:com.jda.models.Buyer#'
-        paramName = 'buyer'
+      case CARRIER_USER_TYPE:
+        resourceString = 'resource:com.jda.models.Carrier#'
+        state.accountType = CARRIER_USER_TYPE 
+        paramName = 'carrier'
+        break
     }
     if (resourceString != '') {
       let paramValue = resourceString.concat(userId)
       state.orderApiParams = {
         [paramName]: paramValue
       }
-      state.accountType = paramName
-      console.log(state.orderApiParams)
     }
   }
 }

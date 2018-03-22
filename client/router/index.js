@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../views/Login'
-import OrderDetail from '../views/OrderDetail'
+import OrderList from '../views/OrderList'
 import Tracker from '../views/Tracker'
 
 Vue.use(Router)
@@ -15,9 +15,9 @@ export default new Router({
       component: Login
     },
     {
-      path: '/OrderDetail',
-      name:'OrderDetail',
-      component: OrderDetail 
+      path: '/OrderList',
+      name:'OrderList',
+      component: OrderList 
     },
     {
       path: '/Tracker/:orderId',

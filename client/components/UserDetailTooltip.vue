@@ -1,14 +1,15 @@
 <template>
     <v-tooltip bottom>
-        <a slot="activator" @mouseover="fetchData" @mouseout="resetLoading">
+        <a slot="activator" @mouseover="fetchData">
           {{ userId }} 
         </a> 
-        <span>
+        <span v-if="!isLoading">
           {{ userDetail.organizationName }}<br/>
           {{ userDetail.address.city }} {{ userDetail.address.zip }} <br />
           {{ userDetail.defaultEmail }} <br />
           {{ userDetail.contact }}  <br />
         </span>
+        <v-progress-circular indeterminate v-else></v-progress-circular>
     </v-tooltip>
 </template>
 
@@ -18,19 +19,16 @@ import { mapActions } from 'vuex'
 export default {
   name: 'user-detail-tooltip',
   props: ['userId', 'userType'],
-  methods: {
-    ...mapActions(['fetchUserByIdAndType'])
+  data: function() {
+    return {
+      isLoading: true
+    }
   },
-  data: {
-    isLoading: true
-  },
   methods: {
+    ...mapActions(['fetchUserByIdAndType']),
     fetchData: function() {
-      let self = this
-      this.fetchUserByIdAndType({ userId: this.userId, userType: this.userType }).then(() => self.isLoading = true)
-    },
-    resetLoading: function() {
       this.isLoading = true
+      this.fetchUserByIdAndType({ userId: this.userId, userType: this.userType }).then(()=> this.isLoading=false)
     }
   },
   computed: {

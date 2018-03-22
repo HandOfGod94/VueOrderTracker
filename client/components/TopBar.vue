@@ -1,6 +1,6 @@
 <template>
-  <v-toolbar app dark>
-    <v-toolbar-title>jda</v-toolbar-title>
+  <v-toolbar app dark color="primary">
+    <v-toolbar-title>jda.</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="hidden-sm-and-down">
       <v-btn flat @click="logout" ><v-icon>account_circle</v-icon></v-btn>

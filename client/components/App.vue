@@ -19,7 +19,7 @@ export default {
   name: 'App',
   created: function() {
     if(this.$session.get('accountId') && this.$session.get('accountId')!='') {
-      this.$router.push({name:'OrderDetail'})
+      this.$router.push({name:'OrderList'})
     } else {
       this.$router.push({name: 'index'})
     }
