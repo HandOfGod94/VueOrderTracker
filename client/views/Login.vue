@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { BUYER_USER_TYPE, SUPPLIER_USER_TYPE } from '../store/user'
+import { BUYER_USER_TYPE, SUPPLIER_USER_TYPE, CARRIER_USER_TYPE } from '../store/user'
 import { SET_API_FILTERS } from '../store/ui'
 
 export default {
@@ -37,7 +37,8 @@ export default {
       isLoggedIn: false,
       items: [
         { text: 'Buyer', value: BUYER_USER_TYPE },
-        { text: 'Supplier', value: SUPPLIER_USER_TYPE }
+        { text: 'Supplier', value: SUPPLIER_USER_TYPE },
+        { text: 'Carrier', value: CARRIER_USER_TYPE }
       ]
     }
   },

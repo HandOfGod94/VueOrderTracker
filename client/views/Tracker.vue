@@ -142,8 +142,8 @@ export default {
           this.bottomRightTitle = 'Carrier'
           return this.order.carrier
         case CARRIER_USER_TYPE:
-          this.bottomRightTitle = 'Supplier'
-          return this.order.supplier
+          this.bottomRightTitle = 'Buyer'
+          return this.order.buyer
       }
     },
     currentTrackerStep: {

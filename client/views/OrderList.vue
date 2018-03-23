@@ -25,11 +25,11 @@
           </td>
           <td>{{ props.item.createDateTime | formatDateTime }}</td>
           <td>{{ props.item.lastUpdatedDateTime | formatDateTime }}</td>
-          <td v-if="accountType === 'SUPPLIER_USER_TYPE' || accountType == 'Carrier'"> 
+          <td v-if="accountType === 'SUPPLIER_USER_TYPE' || accountType == 'CARRIER_USER_TYPE'"> 
               <user-detail-tooltip :userId="props.item.buyer | stripResourceName" userType="BUYER_USER_TYPE">
               </user-detail-tooltip>
           </td>
-          <td v-if="accountType === 'BUYER_USER_TYPE' || accountType === 'Carrier'"> 
+          <td v-if="accountType === 'BUYER_USER_TYPE' || accountType === 'CARRIER_USER_TYPE'"> 
               <user-detail-tooltip :userId="props.item.supplier | stripResourceName" userType="SUPPLIER_USER_TYPE">
               </user-detail-tooltip>
           </td>
