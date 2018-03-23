@@ -84,7 +84,7 @@ export default {
   name: 'order-list',
   timers: {
     fetchOrders: {
-      time: 10000,
+      time: 5000,
       autostart: true,
       immediate: true,
       repeat: true
@@ -128,9 +128,9 @@ export default {
         { text: 'Last Updated', value: 'lastUpdatedDateTime' }
       ]
       if (this.accountType === BUYER_USER_TYPE || this.accountType === CARRIER_USER_TYPE) 
-        heads.push({ text: 'Buyer', value: 'buyer' })
-      if (this.accountType === SUPPLIER_USER_TYPE || this.accountType === CARRIER_USER_TYPE) 
         heads.push({ text: 'Supplier', value: 'supplier' })
+      if (this.accountType === SUPPLIER_USER_TYPE || this.accountType === CARRIER_USER_TYPE) 
+        heads.push({ text: 'Buyer', value: 'buyer' })
       
       return heads
     }, 
