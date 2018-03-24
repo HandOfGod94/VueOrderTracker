@@ -5,11 +5,13 @@ export const UPDATE_TRACKER_STEP = 'UPDATE_TRACKER_STEP'
 export const SET_ACCOUNT_TYPE = 'SET_ACCOUNT_TYPE'
 export const SET_ACCOUNT_ID = 'SET_ACCOUNT_ID'
 export const SET_API_FILTERS = 'SET_API_FILTERS'
+export const LOGOUT_CLEANUP = 'LOGOUT_CLEANUP'
 
 const state = {
   currentTrackerStep: 0,
   orderApiParams: {},
-  accountType: ''
+  accountType: '',
+  accountName: null,
 }
 
 const mutations = {
@@ -19,6 +21,8 @@ const mutations = {
   [SET_API_FILTERS](state, { userAccountType, userId }) {
     let resourceString = ''
     let paramName = ''
+    state.accountName = userId
+
     switch (userAccountType) {
       case BUYER_USER_TYPE:
         resourceString = 'resource:com.jda.models.Buyer#'
@@ -42,6 +46,12 @@ const mutations = {
         [paramName]: paramValue
       }
     }
+  },
+  [LOGOUT_CLEANUP](state, payload) {
+    state.currentTrackerStep = 0
+    state.accountName = null,
+    state.accountType = '',
+    state.orderApiParams = {}
   }
 }
 
