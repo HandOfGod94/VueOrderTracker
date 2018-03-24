@@ -18,7 +18,7 @@
     </v-layout>
     <v-layout>
       <v-flex xs6 offset-xs3>
-        <tracker-detail :order="order">
+        <tracker-detail :order="order" :accountType="accountType">
           <user-detail 
             slot="bottom-left" 
             :user="bottomLeftUser" 

@@ -17,7 +17,7 @@
                 
                 <div class="title"> Items: </div>
                 <span class="body-2" v-for="item in order.orderLineItem" :key="item.lineItemNumber" >
-                  Name: {{item.transactionalTradeItem.ItemDetails}} <br /> 
+                  Name: {{item.transactionalTradeItem.ItemID}} <br /> 
                   Qty: {{ item.requestedQuantity }} <br />
                 </span>
               </div>
@@ -26,15 +26,17 @@
         </v-layout>
       </v-container>
       <v-divider />
-      <v-container class="text-md-center">
-        <div class="headline">Integration detail</div>
-        <span v-if="order.integrationDetails != undefined && order.integrationDetails.length > 0">
-          <div v-for="item in order.integrationDetails" :key="item.DocumentId">
-            <code>Status={{item.Status}}, Action={{item.orderAction}}, Direction={{item.Direction}}, Soruce={{item.sourceComp.ComponentName}}, Destination={{item.destComp.ComponentName}}</code>
-          </div>
-        </span>
-        <div v-else> <v-progress-circular indeterminate color="primary"></v-progress-circular> </div>
-      </v-container>
+      <template v-if="accountType != 'CARRIER_USER_TYPE'">
+        <v-container class="text-md-center">
+          <div class="headline">Integration detail</div>
+          <span v-if="order.integrationDetails != undefined && order.integrationDetails.length > 0">
+            <div v-for="item in order.integrationDetails" :key="item.DocumentId">
+              <code>Status={{item.Status}}, Action={{item.orderAction}}, Direction={{item.Direction}}, Soruce={{item.sourceComp.ComponentName}}, Destination={{item.destComp.ComponentName}}</code>
+            </div>
+          </span>
+          <div v-else> <v-progress-circular indeterminate color="primary"></v-progress-circular> </div>
+        </v-container>
+      </template>
       <v-divider />
       <v-container >
         <v-layout>
@@ -58,7 +60,7 @@
 
 export default {
   name: 'tracker-detail',
-  props: ['order']
+  props: ['order', 'accountType']
 }
 </script>
 
