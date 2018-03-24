@@ -21,7 +21,7 @@
        <tr @click="props.expanded = !props.expanded">
           <td> <a> <router-link :to="{ name:'Tracker', params: {orderId: props.item.orderNumber } }" class="routerLink"> {{ props.item.orderNumber }} </router-link> </a> </td>
           <td>
-            <v-chip :color="getStatusColor(props.item.orderStatus)" text-color="white">{{ props.item.orderStatus }}</v-chip>
+            <v-chip :color="getStatusColor(props.item.orderStatus)" text-color="white">{{ props.item && props.item.orderStatus === 'Planned' ? 'Tendered': props.item.orderStatus }}</v-chip>
           </td>
           <td>{{ props.item.createDateTime | formatDateTime }}</td>
           <td>{{ props.item.lastUpdatedDateTime | formatDateTime }}</td>

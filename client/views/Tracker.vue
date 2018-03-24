@@ -64,7 +64,7 @@ export default {
       steppers: [
         { icon: 'shopping_cart', text: STATUS_CREATED },
         { icon: 'assignment', text: STATUS_PLANNING },
-        { icon: 'assessment', text: STATUS_PLANNED },
+        { icon: 'assessment', text: 'Tendered' },
         { icon: 'flight_takeoff', text: STATUS_IN_TRANSIT },
         { icon: 'check', text: STATUS_ARRIVED }
       ]
